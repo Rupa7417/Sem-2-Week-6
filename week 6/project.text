@@ -1,0 +1,42 @@
+db.createCollection("Books");
+db.createCollection("Authors");
+db.createCollection("Members");
+db.createCollection("Loans");
+
+db.Books.insertMany([
+    { ISBN: "1234567890", title: "Book One", authorID: 1, genre: "Fiction", available: true },
+    { ISBN: "0987654321", title: "Book Two", authorID: 2, genre: "Non-Fiction", available: true }
+]);
+
+db.Books.find({ authorID: 1 });
+
+db.Books.updateOne(
+    { ISBN: "1234567890" },
+    { $set: { available: false } }
+);
+
+
+db.Members.deleteMany({
+    lastLoanDate: { $lt: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) }
+});
+
+db.Books.find({ genre: "Fiction", available: true });
+
+db.Books.find({
+    $and: [
+        { genre: "Fiction" },
+        { publicationYear: { $gte: 2020 } }
+    ]
+});
+
+db.Books.find().sort({ title: 1 });
+
+db.Authors.find().sort({ authorName: 1 });
+
+db.Books.countDocuments({});
+
+
+db.Books.aggregate([
+    { $match: { available: true } },
+    { $group: { _id: "$genre", totalAvailable: { $sum: 1 } } }
+]);
